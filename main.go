@@ -11,6 +11,28 @@ type Person struct {
 	Email string `json:"email"`
 }
 
+
+// Implementing MarshalJSON to set default values
+func (person Person) MarshalJSON() ([]byte, error) {
+	// Define an auxiliary struct to prevent infinite recursion
+	type Alias Person
+	aux := Alias(person) // Copy existing values into the alias
+
+	// Apply default values without modifying the original struct
+	if aux.Name == "" {
+		aux.Name = "Default"
+	}
+	if aux.Age == 0 {
+		aux.Age = 18
+	}
+	if aux.Email == "" {
+		aux.Email = "default@example.com"
+	}
+
+	// Marshal the auxiliary struct to JSON
+	return json.Marshal(aux)
+}
+
 //Add default values to the object of Person Struct
 func (person *Person) UnmarshalJSON(data []byte) error {
 	type Alias Person
@@ -19,7 +41,7 @@ func (person *Person) UnmarshalJSON(data []byte) error {
 	}{
 		Alias: (*Alias)(person),
 	}
-
+	
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
 	}
@@ -33,12 +55,14 @@ func (person *Person) UnmarshalJSON(data []byte) error {
 	if person.Email == "" {
 		person.Email = "default@example.com"
 	}
-
 	return nil
 }
 
+
+var EmptyPerson Person = Person{}
 // Print nestedjson using printJson function in print_nested_json.go
 func main() {
+
 	// Sample JSON input (can be replaced with any valid JSON object)
 	jsonData := `{
 		"id": 123,
@@ -54,13 +78,13 @@ func main() {
 	var jsonObject map[string]interface{}
 
 	// Unmarshal JSON into the map
-	jsonObject,err := UnmarshalJsonToMap(jsonData)
+	jsonObject,err := UnmarshalJsonToMap([]byte(jsonData))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Process and print the JSON data
 	for keyItem, valueItems := range jsonObject {
-		printJson(keyItem, valueItems)
+		PrintJson(keyItem, valueItems)
 	}
 }

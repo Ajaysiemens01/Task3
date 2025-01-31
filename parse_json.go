@@ -15,12 +15,12 @@ func MarshalPerson(person Person) ([]byte, error) {
 }
 
 // unmarshalPerson takes a JSON byte slice and converts it back into a Person struct.
-func UnmarshalPerson(PersonInBytes []byte) (Person, error) {
+func UnmarshalPerson(personInBytes []byte) (Person, error) {
 	var person Person
-	if err := json.Unmarshal(PersonInBytes, &person); err != nil {
-		return Person{}, fmt.Errorf("error unmarshalling person: %v", err)
+	if err := json.Unmarshal(personInBytes, &person); err != nil {
+		return EmptyPerson, fmt.Errorf("error unmarshalling person: %v", err)
 	}
-	person.printPerson()
+	person.PrintPerson()
 
 	return person, nil
 }
@@ -32,15 +32,15 @@ func UnmarshalPersonsArray(personsArray string) ([]Person, error) {
 		return nil, fmt.Errorf("error unmarshalling persons array: %v", err)
 	}
 	// Iterate over the persons slice and print each person's name and age.
-	printPersonsArray(persons)
+	PrintPersonsArray(persons)
 	return persons, nil
 }
 
 //unmarshalJsonToMap takes a JSON string and converts to a map 
-func UnmarshalJsonToMap(jsonStr string) (map[string]interface{},error) {
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal([]byte(jsonStr), &jsonData); err != nil {
+func UnmarshalJsonToMap(jsonString []byte) (map[string]interface{},error) {
+	var jsonObject map[string]interface{}
+	if err := json.Unmarshal(jsonString, &jsonObject); err != nil {
 		return nil, fmt.Errorf("error unmarshalling persons array: %v", err)
 	}
-	return jsonData,nil
+	return jsonObject,nil
 }

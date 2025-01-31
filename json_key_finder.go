@@ -8,20 +8,21 @@ import(
 	"fmt"
 )
 // FindKey recursively searches for a key in a nested JSON structure.
-func FindKeyInJson(jsonData map[string]interface{}, requireKey string) (interface{}, error) {
+func FindKeyInJson(jsonData map[string]interface{}, requiredKey string) (interface{}, error) {
 	for key, value := range jsonData {
 		// Check if the current key matches the required key.
-		if key == requireKey {
+		if key == requiredKey {
 			return value, nil
 		}
 		// If the value is a nested map, recursively search within it.
 		if nestedMap, ok := value.(map[string]interface{}); ok {
-			requiredValue, err := FindKeyInJson(nestedMap, requireKey)
-		    if err == nil {
+			requiredValue, err := FindKeyInJson(nestedMap, requiredKey)
+		    if err == nil{
 				return requiredValue, nil
 			} 
+			
 		}
 	}
 	// Return an error if the key is not found.
-	return nil, fmt.Errorf("key '%s' not found", requireKey)
+	return nil, fmt.Errorf("key '%s' not found", requiredKey)
 }
